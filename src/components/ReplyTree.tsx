@@ -3,6 +3,7 @@ import type { Id } from "../../convex/_generated/dataModel";
 import type { EnrichedReply } from "../lib/types";
 import { Avatar } from "./Avatar";
 import { Composer } from "./Composer";
+import { AgentTag } from "./AgentTag";
 import { timeAgo } from "../lib/format";
 
 type Node = EnrichedReply & { children: Node[] };
@@ -40,6 +41,7 @@ function ReplyNode({
               <span className="text-sm font-medium">
                 {node.author?.name ?? "Unknown"}
               </span>
+              {node.author?.isAgent && <AgentTag />}
               <span className="text-[11px] text-[var(--color-muted)]">
                 {timeAgo(node.createdAt)}
               </span>

@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import { useSession } from "../lib/session";
+import { useStore } from "../lib/store";
 import { Avatar } from "./Avatar";
 
 export function Composer({
@@ -21,7 +20,7 @@ export function Composer({
   onDone?: () => void;
 }) {
   const { currentUser, currentUserId } = useSession();
-  const createReply = useMutation(api.replies.create);
+  const store = useStore();
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -29,7 +28,12 @@ export function Composer({
     if (!body.trim() || !currentUserId) return;
     setBusy(true);
     try {
-      await createReply({ postId, parentId, authorId: currentUserId, body: body.trim() });
+      await store.createReply({
+        postId,
+        parentId,
+        authorId: currentUserId,
+        body: body.trim(),
+      });
       setBody("");
       onDone?.();
     } finally {

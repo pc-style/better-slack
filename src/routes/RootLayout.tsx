@@ -1,17 +1,12 @@
 import { useState } from "react";
 import { Link, Outlet } from "@tanstack/react-router";
-import { useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
-import { useSession } from "../lib/session";
+import { useStore } from "../lib/store";
 import { UserSwitcher } from "../components/UserSwitcher";
 import { NewPostDialog } from "../components/NewPostDialog";
 
 export function RootLayout() {
-  const { currentUserId } = useSession();
-  const counts = useQuery(
-    api.posts.counts,
-    currentUserId ? { viewerId: currentUserId } : "skip",
-  );
+  const store = useStore();
+  const counts = store.useCounts();
   const [composing, setComposing] = useState(false);
 
   return (

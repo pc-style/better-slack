@@ -1,36 +1,23 @@
 import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
-import { useSession } from "../lib/session";
+import { useStore } from "../lib/store";
 import { PostCard } from "../components/PostCard";
 import { SPACES, PRIORITIES, priorityStyles } from "../lib/format";
 
 export function FeedPage() {
-  const { currentUserId } = useSession();
+  const store = useStore();
   const [term, setTerm] = useState("");
   const [space, setSpace] = useState<string | null>(null);
   const [priority, setPriority] = useState<string | null>(null);
   const [onlyUnread, setOnlyUnread] = useState(false);
 
-  const markAllRead = useMutation(api.reads.markAllRead);
-
   const searching = term.trim().length > 0;
 
-  const feed = useQuery(
-    api.posts.feed,
-    searching
-      ? "skip"
-      : {
-          viewerId: currentUserId,
-          space: space ?? undefined,
-          priority: (priority as never) ?? undefined,
-          onlyUnread,
-        },
-  );
-  const searchResults = useQuery(
-    api.posts.search,
-    searching ? { term, viewerId: currentUserId } : "skip",
-  );
+  const feed = store.useFeed({
+    space: space ?? undefined,
+    priority: (priority as never) ?? undefined,
+    onlyUnread,
+  });
+  const searchResults = store.useSearch(term);
 
   const posts = searching ? searchResults : feed;
 
@@ -85,7 +72,7 @@ export function FeedPage() {
           </FilterChip>
 
           <button
-            onClick={() => currentUserId && markAllRead({ userId: currentUserId })}
+            onClick={() => store.markAllRead()}
             className="ml-auto text-xs text-[var(--color-muted)] transition hover:text-fg"
           >
             mark all read

@@ -1,35 +1,32 @@
 import { useEffect } from "react";
 import { Link, getRouteApi } from "@tanstack/react-router";
-import { useQuery, useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { useStore } from "../lib/store";
 import type { Id } from "../../convex/_generated/dataModel";
-import { useSession } from "../lib/session";
 import { Avatar } from "../components/Avatar";
 import { AgentSummary } from "../components/AgentSummary";
 import { ReplyTree } from "../components/ReplyTree";
 import { Composer } from "../components/Composer";
 import { timeAgo, priorityStyles } from "../lib/format";
+import { AgentTag } from "../components/AgentTag";
 
 const routeApi = getRouteApi("/posts/$postId");
 
 export function PostPage() {
   const { postId: postIdParam } = routeApi.useParams();
   const postId = postIdParam as Id<"posts">;
-  const { currentUserId } = useSession();
+  const store = useStore();
 
-  const post = useQuery(api.posts.get, {
-    postId,
-    viewerId: currentUserId,
-  });
-  const replies = useQuery(api.replies.listForPost, { postId });
-  const markRead = useMutation(api.reads.markRead);
+  const post = store.usePost(postId);
+  const replies = store.useReplies(postId);
 
-  // Mark read whenever this post (or its activity) is viewed.
+  // Mark read whenever this post (or its activity) is viewed — session only.
   useEffect(() => {
-    if (currentUserId && post) {
-      markRead({ userId: currentUserId, postId });
+    if (post) {
+      store.markRead(postId);
     }
-  }, [currentUserId, postId, post?.lastActivityAt]);
+    // store.markRead is stable enough via useCallback; depend on activity bump.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postId, post?.lastActivityAt]);
 
   if (post === undefined) {
     return (
@@ -83,6 +80,7 @@ export function PostPage() {
         <div className="mt-2 flex items-center gap-2.5 text-sm text-[var(--color-muted)]">
           <Avatar user={post.author} size={28} />
           <span className="text-fg">{post.author?.name}</span>
+          {post.author?.isAgent && <AgentTag />}
           <span>· {post.author?.title}</span>
           <span>· {timeAgo(post.createdAt)}</span>
         </div>

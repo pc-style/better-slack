@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useAction } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { useStore } from "../lib/store";
 import type { Id } from "../../convex/_generated/dataModel";
 import { Markdown } from "./Markdown";
 import { timeAgo } from "../lib/format";
@@ -16,15 +15,17 @@ export function AgentSummary({
   model?: string;
   updatedAt?: number;
 }) {
-  const summarize = useAction(api.ai.summarizePost);
+  const store = useStore();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const local = store.isLocalId(postId);
 
   const onRegenerate = async () => {
     setBusy(true);
     setError(null);
     try {
-      await summarize({ postId });
+      await store.summarize(postId);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       setError(
@@ -50,10 +51,11 @@ export function AgentSummary({
         </div>
         <button
           onClick={onRegenerate}
-          disabled={busy}
-          className="rounded-md border border-accent/30 px-2.5 py-1 text-xs text-accent-soft transition hover:bg-accent/15 disabled:opacity-50"
+          disabled={busy || local}
+          title={local ? "Save the post to generate a summary" : undefined}
+          className="rounded-md border border-accent/30 px-2.5 py-1 text-xs text-accent-soft transition hover:bg-accent/15 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {busy ? "summarizing…" : summary ? "regenerate" : "generate"}
+          {busy ? "summarizing…" : local ? "unsaved" : summary ? "regenerate" : "generate"}
         </button>
       </div>
 

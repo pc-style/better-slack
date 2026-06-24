@@ -8,6 +8,9 @@ export type EnrichedPost = Doc<"posts"> & {
   author: Doc<"users"> | null;
   participants: Doc<"users">[];
   unread: boolean;
+  // Raw per-viewer read timestamp, so the client can layer session-only
+  // read state on top without re-querying the backend.
+  lastReadAt: number;
 };
 
 async function enrich(
@@ -20,7 +23,7 @@ async function enrich(
     await Promise.all(post.participantIds.map((id) => ctx.db.get(id)))
   ).filter((u): u is Doc<"users"> => u !== null);
 
-  let unread = false;
+  let lastReadAt = 0;
   if (viewerId) {
     const read = await ctx.db
       .query("postReads")
@@ -28,10 +31,12 @@ async function enrich(
         q.eq("userId", viewerId).eq("postId", post._id),
       )
       .unique();
-    unread = post.lastActivityAt > (read?.lastReadAt ?? 0);
+    lastReadAt = read?.lastReadAt ?? 0;
   }
 
-  return { ...post, author, participants, unread };
+  const unread = post.lastActivityAt > lastReadAt;
+
+  return { ...post, author, participants, unread, lastReadAt };
 }
 
 /** Activity-bumped feed with optional space / priority / unread filtering. */

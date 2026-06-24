@@ -1,4 +1,4 @@
-import { action, internalQuery, internalMutation } from "./_generated/server";
+import { action, internalQuery } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { v } from "convex/values";
 import { generateText, type LanguageModel } from "ai";
@@ -78,24 +78,9 @@ export const getContext = internalQuery({
   },
 });
 
-export const saveSummary = internalMutation({
-  args: {
-    postId: v.id("posts"),
-    summary: v.string(),
-    model: v.string(),
-  },
-  handler: async (ctx, args) => {
-    await ctx.db.patch(args.postId, {
-      summary: args.summary,
-      summaryModel: args.model,
-      summaryUpdatedAt: Date.now(),
-    });
-  },
-});
-
 export const summarizePost = action({
   args: { postId: v.id("posts") },
-  handler: async (ctx, args): Promise<string> => {
+  handler: async (ctx, args): Promise<{ summary: string; model: string }> => {
     const ctxData = await ctx.runQuery(internal.ai.getContext, {
       postId: args.postId,
     });
@@ -122,12 +107,9 @@ export const summarizePost = action({
       prompt: transcript,
     });
 
-    const summary = text.trim();
-    await ctx.runMutation(internal.ai.saveSummary, {
-      postId: args.postId,
-      summary,
-      model: modelId,
-    });
-    return summary;
+    // Note: we deliberately do NOT persist the summary. The public demo keeps
+    // the database read-only; the client stores the result in its session so
+    // it disappears on refresh. Seed data ships baked summaries instead.
+    return { summary: text.trim(), model: modelId };
   },
 });

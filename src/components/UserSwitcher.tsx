@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useSession } from "../lib/session";
 import { Avatar } from "./Avatar";
+import { AgentTag } from "./AgentTag";
 
 export function UserSwitcher() {
   const { users, currentUser, setCurrentUserId } = useSession();
@@ -26,7 +27,10 @@ export function UserSwitcher() {
       >
         <Avatar user={currentUser} size={28} />
         <div className="text-left leading-tight">
-          <div className="text-sm font-medium">{currentUser.name}</div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm font-medium">{currentUser.name}</span>
+            {currentUser.isAgent && <AgentTag />}
+          </div>
           <div className="text-[11px] text-[var(--color-muted)]">
             {currentUser.title}
           </div>
@@ -52,7 +56,10 @@ export function UserSwitcher() {
             >
               <Avatar user={u} size={28} />
               <div className="leading-tight">
-                <div className="text-sm">{u.name}</div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm">{u.name}</span>
+                  {u.isAgent && <AgentTag />}
+                </div>
                 <div className="text-[11px] text-[var(--color-muted)]">
                   {u.title}
                 </div>

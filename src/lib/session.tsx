@@ -18,28 +18,28 @@ type SessionValue = {
 };
 
 const SessionContext = createContext<SessionValue | null>(null);
-const STORAGE_KEY = "postwork:userId";
 
+// The current user lives in memory only — it resets to the default on refresh,
+// so a visitor's "view as teammate" choice never persists against the shared
+// demo deployment.
 export function SessionProvider({ children }: { children: ReactNode }) {
   const users = useQuery(api.users.list);
   const [currentUserId, setCurrentUserIdState] = useState<
     Id<"users"> | undefined
-  >(() => {
-    return (localStorage.getItem(STORAGE_KEY) as Id<"users"> | null) ?? undefined;
-  });
+  >();
 
-  // Default to the first user once the list loads if nothing is selected
-  // (or the stored id is stale).
+  // Default to the first human once the list loads (agents stay switchable but
+  // aren't the default view).
   useEffect(() => {
     if (!users || users.length === 0) return;
     const valid = currentUserId && users.some((u) => u._id === currentUserId);
-    if (!valid) setCurrentUserIdState(users[0]._id);
+    if (!valid) {
+      const firstHuman = users.find((u) => !u.isAgent) ?? users[0];
+      setCurrentUserIdState(firstHuman._id);
+    }
   }, [users, currentUserId]);
 
-  const setCurrentUserId = (id: Id<"users">) => {
-    localStorage.setItem(STORAGE_KEY, id);
-    setCurrentUserIdState(id);
-  };
+  const setCurrentUserId = (id: Id<"users">) => setCurrentUserIdState(id);
 
   const value = useMemo<SessionValue>(() => {
     const currentUser = users?.find((u) => u._id === currentUserId);

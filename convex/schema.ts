@@ -21,6 +21,8 @@ export default defineSchema({
     title: v.string(),
     avatarColor: v.string(),
     initials: v.string(),
+    // AI coding agents (Cursor, Codex, Claude Code, …) post as teammates too.
+    isAgent: v.optional(v.boolean()),
   }),
 
   posts: defineTable({

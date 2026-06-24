@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { useMutation } from "convex/react";
 import { useNavigate } from "@tanstack/react-router";
-import { api } from "../../convex/_generated/api";
 import { useSession } from "../lib/session";
+import { useStore } from "../lib/store";
 import { SPACES, PRIORITIES, priorityStyles } from "../lib/format";
 
 export function NewPostDialog({ onClose }: { onClose: () => void }) {
   const { currentUserId } = useSession();
-  const createPost = useMutation(api.posts.create);
+  const store = useStore();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
@@ -20,7 +19,7 @@ export function NewPostDialog({ onClose }: { onClose: () => void }) {
     if (!title.trim() || !body.trim() || !currentUserId) return;
     setBusy(true);
     try {
-      const postId = await createPost({
+      const postId = await store.createPost({
         authorId: currentUserId,
         title: title.trim(),
         body: body.trim(),
