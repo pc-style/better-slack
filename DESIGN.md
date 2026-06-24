@@ -16,34 +16,41 @@ colors:
   normal: "#8a8782"
 typography:
   display:
-    fontFamily: "ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace"
-    fontSize: "0.875rem"
+    fontFamily: "'Inter Variable', Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    fontSize: "1.25rem"
     fontWeight: 600
     lineHeight: 1.2
-    letterSpacing: "-0.01em"
+    letterSpacing: "-0.02em"
   title:
     fontFamily: "{typography.display.fontFamily}"
     fontSize: "0.9375rem"
     fontWeight: 600
     lineHeight: 1.3
-    letterSpacing: "-0.01em"
+    letterSpacing: "-0.011em"
   body:
     fontFamily: "{typography.display.fontFamily}"
     fontSize: "0.875rem"
     fontWeight: 400
-    lineHeight: 1.65
-    letterSpacing: "-0.01em"
-    fontFeature: "'ss01', 'cv01'"
+    lineHeight: 1.6
+    letterSpacing: "-0.011em"
+    fontFeature: "'cv02', 'cv03', 'cv04', 'cv11'"
   label:
     fontFamily: "{typography.display.fontFamily}"
     fontSize: "0.6875rem"
-    fontWeight: 600
+    fontWeight: 500
     lineHeight: 1.2
-    letterSpacing: "0.02em"
+    letterSpacing: "normal"
+  mono:
+    fontFamily: "ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace"
+    fontSize: "0.8125rem"
+    fontWeight: 400
+    lineHeight: 1.6
+    letterSpacing: "normal"
 rounded:
   sm: "2px"
   md: "6px"
   lg: "8px"
+  pill: "9999px"
 spacing:
   xs: "4px"
   sm: "8px"
@@ -80,6 +87,18 @@ components:
     rounded: "{rounded.md}"
     padding: "2px 6px"
     typography: "{typography.label}"
+  tag-scope:
+    backgroundColor: "{colors.deep-wine}"
+    textColor: "{colors.wine-glow}"
+    rounded: "{rounded.md}"
+    padding: "2px 6px"
+    typography: "{typography.label}"
+  chip-org:
+    backgroundColor: "{colors.near-black}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.pill}"
+    padding: "4px 10px"
+    typography: "{typography.label}"
   tag-agent:
     backgroundColor: "{colors.surface-2}"
     textColor: "{colors.muted}"
@@ -96,11 +115,11 @@ components:
 
 Postwork is a calm, durable log of how a team thinks and decides. The whole
 surface is built to make a post feel like a permanent entry in a ledger rather
-than a message scrolling past — warm near-black, monospace throughout, and a
-single deep-wine accent that lights up only the things that carry signal. The
-aesthetic is terminal-adjacent: a quiet engineering surface where structure and
-state are the content, and chrome recedes until you need it. The voice is
-lowercase and unhurried; confidence comes from clarity, not volume.
+than a message scrolling past — warm near-black, a clean humanist sans
+(Inter) throughout, and a single deep-wine accent that lights up only the things
+that carry signal. The aesthetic is quiet and editorial: a composed reading
+surface where structure and state are the content, and chrome recedes until you
+need it. Confidence comes from clarity and restraint, not volume.
 
 This system explicitly rejects chat clutter — no notification soup, no ephemeral
 recency theater, no consumer-social engagement mechanics (likes, reactions,
@@ -117,11 +136,13 @@ teammate should be able to triage the whole feed at a glance.
 **Key Characteristics:**
 
 - Warm near-black canvas; one deep-wine accent, used sparingly.
-- Monospace everywhere — the defining trait.
-- Lowercase chrome (nav, buttons, filters, labels); user content keeps its case.
+- Inter (variable humanist sans) everywhere; monospace reserved for code only.
+- Lowercase navigation chrome; labels, tags, and breadcrumbs use sentence case.
+- User content keeps its own casing.
 - Flat by default; depth and emphasis appear only on state.
-- No emoji or pictographs — mono text affordances instead (`/`, `ai`, `agent`).
-- Small radii (cards `8px`, controls `6px`, tags `2px`).
+- No emoji — minimal line-style SVG icons (comment, lock) where a glyph reads
+  faster than a word; mono text affordances (`/`, `ai`) otherwise.
+- Small radii (cards `8px`, controls `6px`, tags `2px`, member chips full-pill).
 
 ## 2. Colors
 
@@ -130,27 +151,27 @@ of signal; everything else is a tonal neutral.
 
 ### Primary
 
-- **Deep Wine** (`#8c1862`): The one accent. Carries primary actions (`+ new
-  post`), the brand mark, selection, and the agent-summary frame. Used on ≤10% of
-  any screen — its rarity is the point.
+- **Deep Wine** (`#8c1862`): The one accent. Carries primary actions (`new
+  post`, `invite org`), the brand mark, selection, and the agent-summary frame.
+  Used on ≤10% of any screen — its rarity is the point.
 - **Wine Glow** (`#b53a82`): The softer, brighter sibling. Used for accent *text*
-  and links (`active 5d ago`, `ai summary`, unread dot, the agent-summary label),
-  and for the primary button's hover state. Where Deep Wine fills, Wine Glow
-  speaks.
+  and links (`active 5d ago`, `ai summary`, unread dot, scope tags, the org-only
+  lock), and for the primary button's hover state. Where Deep Wine fills, Wine
+  Glow speaks.
 
 ### Neutral
 
 - **Near-Black** (`#0a0a0b`): The body canvas. Also the sticky header at 85%
-  opacity over a backdrop blur.
+  opacity over a backdrop blur, and the inset fill of member chips and inputs.
 - **Surface** (`#121014`): The resting surface for cards and panels — one step up
   from the canvas.
 - **Surface-2** (`#18151a`): The next tonal step up, used on hover and for inset
-  affordances (agent tag, code).
+  affordances (agent tag, role badge, code).
 - **Hairline** (`#252327`): Borders and dividers. The structural grid of the UI;
   flat layering leans on these instead of shadows.
 - **Ink** (`#e8e6e3`): Primary text and headings. Warm off-white, not pure white.
 - **Muted** (`#8a8782`): Secondary text — metadata, snippets, labels, timestamps.
-- **Faint** (`#4a4845`): The quietest neutral; backgrounds for the `normal`
+- **Faint** (`#4a4845`): The quietest neutral; backgrounds for the `Normal`
   priority chip and the lowest-emphasis surfaces.
 
 ### Tertiary (priority state colors)
@@ -158,9 +179,9 @@ of signal; everything else is a tonal neutral.
 Warm, muted state colors — distinct from the page accent, never used as
 decoration.
 
-- **Urgent Coral** (`#ff6b6b`): The `urgent` priority chip and dot.
-- **High Gold** (`#d9a441`): The `high` priority chip and dot.
-- **Normal Grey** (`#8a8782`): The `normal` priority chip and dot (shares Muted).
+- **Urgent Coral** (`#ff6b6b`): The `Urgent` priority chip and dot.
+- **High Gold** (`#d9a441`): The `High` priority chip and dot.
+- **Normal Grey** (`#8a8782`): The `Normal` priority chip and dot (shares Muted).
 
 ### Named Rules
 
@@ -174,37 +195,46 @@ the wine accent.
 
 ## 3. Typography
 
-**Display / Body / Label Font:** `ui-monospace` system stack — SF Mono, JetBrains
-Mono, Cascadia Code, Menlo, Consolas (monospace fallback).
+**Display / Title / Body / Label Font:** Inter Variable — humanist sans, with a
+system-ui / -apple-system / Segoe UI / Roboto fallback stack.
 
-**Character:** One monospace family in multiple weights does all the work. The
-fixed-width rhythm is the brand's signature — it makes the surface read as an
-engineering record. Stylistic sets `ss01` and `cv01` are on; tracking is a subtle
-`-0.01em` across the board. No second family, ever.
+**Code Font:** `ui-monospace` system stack — SF Mono, JetBrains Mono, Cascadia
+Code, Menlo, Consolas (monospace fallback). Scoped to `code`, `pre`, `kbd`, and
+`samp` only.
+
+**Character:** One humanist sans in multiple weights does all the work — Inter's
+even rhythm and high legibility make the surface read as a calm, modern record
+rather than a terminal. Inter character variants `cv02 cv03 cv04 cv11` are on for
+a cleaner single-storey feel; global tracking is a subtle `-0.011em`, loosened to
+`normal` on small labels and all code. There is no second display family — weight
+and size carry hierarchy.
 
 ### Hierarchy
 
-- **Display / Brand** (600, `0.875rem`, 1.2): The wordmark and the densest header
-  labels. Postwork has no large hero type — this is a product surface, so the
-  "display" tier stays compact.
+- **Display / Title** (600, `1.25rem`, 1.2, `-0.02em`): Page titles and space
+  names. Postwork has no oversized hero type — this is a product surface, so the
+  largest tier stays compact and tight.
 - **Title** (600, `0.9375rem`, 1.3): Post titles in cards and on the detail page.
   Unread titles go semibold + ink; read titles drop to medium weight.
-- **Body** (400, `0.875rem`, 1.65): Post bodies, replies, and summaries. Prose runs
+- **Body** (400, `0.875rem`, 1.6): Post bodies, replies, and summaries. Prose runs
   in `.prose-post` with `white-space: pre-wrap`; cap reading measure at ~65–75ch on
   the detail page.
-- **Label** (600, `0.6875rem`, `0.02em`): Metadata, priority chips, the `agent`
-  tag (uppercase here), counts. Chrome labels are lowercase; the `agent` badge is
-  the one deliberate uppercase tracked element, mirroring a bot badge.
+- **Label** (500, `0.6875rem`, `normal`): Metadata, priority/scope chips, counts,
+  role badges. Sentence case (`High`, `Space`, `Owner`) — never tracked all-caps.
+- **Code / Mono** (400, `0.8125rem`, 1.6): Inline code and fenced blocks only. The
+  one place fixed-width type survives.
 
 ### Named Rules
 
-**The Lowercase Chrome Rule.** All interface chrome — nav, buttons, filters,
-section labels — is lowercase. User-authored content keeps its own casing. The
-only sanctioned uppercase is the small tracked `agent` badge.
+**The Lowercase-Nav Rule.** Primary navigation and global actions stay lowercase
+(`agents`, `spaces`, `orgs`, `new post`) — the app's quiet, unhurried register.
+Everything else (labels, tags, breadcrumbs, role badges) uses sentence case, and
+user-authored content always keeps its own casing.
 
-**The No-Emoji Rule.** No emoji or pictographs in UI or content chrome. Use mono
-text affordances instead (`/` search prompt, `ai`, `agent`, `active 5d ago`).
-Typographic arrows (`←` `→`) are allowed.
+**The No-Emoji Rule.** No emoji or pictographic glyphs from the Unicode emoji
+block, ever. Where a symbol reads faster than a word, use a minimal 1.5px-stroke
+line SVG icon (comment bubble, lock) tuned to `currentColor`; otherwise prefer a
+mono text affordance (`/`, `ai`). Typographic arrows (`←` `→`) are allowed.
 
 ## 4. Elevation
 
@@ -212,9 +242,11 @@ Flat at rest. Postwork uses no decorative drop shadows; depth is built from tona
 layering (`near-black → surface → surface-2`) and 1px hairline borders. The single
 piece of elevation is the sticky header, which floats via an 85%-opacity
 near-black fill over a `backdrop-blur` — a glass treatment used once, purposefully,
-not as a default. Everything else gains depth or emphasis only as a *response to
-state*: a card lifts to `surface-2` on hover, an unread post grows a wine-glow dot
-and a semibold ink title, focus and selection brighten toward the accent.
+not as a default. The space glyph carries a barely-there radial wine wash to read
+as an avatar, never as a lifted card. Everything else gains depth or emphasis only
+as a *response to state*: a card lifts to `surface-2` on hover, an unread post
+grows a wine-glow dot and a semibold ink title, focus and selection brighten
+toward the accent.
 
 ### Named Rules
 
@@ -230,14 +262,15 @@ screen to screen. Every interactive element should read as obviously itself.
 ### Buttons
 
 - **Shape:** `rounded-lg` (8px) for primary, `rounded-md` (6px) for secondary /
-  ghost controls.
+  ghost controls; full-pill (`9999px`) for the contextual `invite org` action next
+  to member chips.
 - **Primary:** Deep Wine fill (`#8c1862`), ink text, `6px 12px` padding; hover
-  brightens to Wine Glow (`#b53a82`). Used for `+ new post`. One primary action per
-  view.
+  brightens to Wine Glow (`#b53a82`). Used for `new post` / `invite org`. One
+  primary action per view.
 - **Ghost / Secondary:** Transparent with a wine-tinted hairline border, Wine Glow
   text; hover adds a faint `accent/15` wash. Used for `generate` / `regenerate`.
-- **Disabled:** `opacity-50`, `cursor-not-allowed`, no color change (e.g. an
-  unsaved post's summary button).
+- **Disabled:** `opacity-40`, `cursor-not-allowed`, no color change (e.g. an
+  unsaved post's submit button).
 
 ### Cards (post)
 
@@ -247,29 +280,51 @@ screen to screen. Every interactive element should read as obviously itself.
   No shadow.
 - **Unread marker:** a `size-2` Wine Glow dot in the gutter; title goes semibold +
   ink. Read cards reserve the same gutter space (no layout shift).
+- **Meta rail (space cards):** a right-aligned column carries the comment count
+  (line-icon + number) and an org-only lock, so triage signal sits apart from the
+  body.
 
 ### Agent Summary
 
 - A distinct wine-framed panel: `accent/25` border over a barely-there
   `accent/[0.06]` wash, `rounded-lg`, `16px` padding. Header pairs an `ai` chip
-  (`accent/20` fill, Wine Glow text) with a lowercase `agent summary` label. This
-  is the one surface where the accent frames a whole block — its job is to make the
-  catch-up affordance unmistakable.
+  (`accent/20` fill, Wine Glow text) with an `agent summary` label. This is the one
+  surface where the accent frames a whole block — its job is to make the catch-up
+  affordance unmistakable.
 
 ### Tags & Chips
 
-- **Priority chip:** `rounded-md`, `2px 6px`, a colored dot + lowercase label, tinted
-  in the priority's own hue (`urgent`/`high`/`normal`). The label, not just the
-  color, names the state — never color alone.
-- **Space chip:** hairline-bordered, muted text, `rounded-md` (e.g. `Engineering`).
-- **Agent badge:** `surface-2` fill, hairline border, muted uppercase `agent`,
-  `rounded-sm` (2px). The smallest radius in the system.
+- **Priority chip:** `rounded-md`, `2px 6px`, a colored dot + sentence-case label,
+  tinted in the priority's own hue (`Urgent`/`High`/`Normal`). The label, not just
+  the color, names the state — never color alone.
+- **Scope tag:** `rounded-md`, wine-tinted (`accent/30` border, `accent/5` fill,
+  Wine Glow text), sentence case (`Space`/`Org`/`Public`). The accent's only
+  recurring text use in the feed.
+- **Org chip / member pill:** full-pill, near-black fill, hairline border; pairs an
+  org color-square (initials) with the org name and a `surface-2` role sub-badge
+  (`Owner`/`Member`).
+- **Agent badge:** `surface-2` fill, hairline border, muted tracked `agent`,
+  `rounded-sm` (2px). The smallest radius in the system, and the one sanctioned
+  uppercase.
+
+### Inputs / Fields
+
+- **Style:** 1px hairline border, near-black fill, `rounded-md`/`rounded-lg` (pill
+  for the inline `@handle` invite), muted placeholder.
+- **Focus:** border shifts to `accent/50`; no glow, no ring bloat.
 
 ### Header / Nav
 
 - Sticky, `z-30`, 85%-opacity near-black over `backdrop-blur`, hairline bottom
-  border, `max-w-3xl` centered. Brand mark is a wine `P` tile. Carries an inline
-  `N unread · M urgent` status and the user switcher.
+  border, `max-w-3xl` centered. Brand mark is a wine `P` tile. Nav labels are
+  lowercase; carries an inline `N unread · M urgent` status and the user switcher.
+
+### Space Glyph (signature)
+
+- A `size-20` `rounded-lg` tile with a hairline border and a faint radial wine
+  wash, carrying the two member orgs' color dots separated by a `×`. Identifies a
+  cross-company space at a glance without an uploaded image; derived entirely from
+  membership data.
 
 ### States (all interactive components)
 
@@ -282,3 +337,35 @@ Errors render as a small `red-300`-on-`red/10` inline note, not a modal.
 **The Findable-Over-Fresh Rule.** Components privilege durability and triage signal
 (unread, priority, activity, summary) over recency theater. If a treatment makes
 the feed feel like a chat stream, it's wrong.
+
+## 6. Do's and Don'ts
+
+### Do:
+
+- **Do** keep Inter as the single UI family; carry hierarchy with weight (400 /
+  500 / 600) and size, not a second display face.
+- **Do** keep the canvas warm near-black and build depth from tonal layering
+  (`near-black → surface → surface-2`) plus 1px hairlines.
+- **Do** reserve deep wine for ≤10% of a screen — primary action, brand, selection,
+  scope tags, and the agent-summary frame.
+- **Do** name state with a label, not color alone (`High` + gold dot, `Org` + lock).
+- **Do** keep navigation and global actions lowercase; sentence-case everything
+  else; never touch user-authored casing.
+- **Do** use minimal line-style SVG icons (1.5px stroke, `currentColor`) only where
+  a glyph triages faster than a word.
+
+### Don't:
+
+- **Don't** reintroduce monospace for UI text — it is now scoped to `code` / `pre`
+  only. The old terminal-everywhere look is retired.
+- **Don't** add a second accent hue (no indigo, no blue); priority colors are state
+  vocabulary, not a second brand color.
+- **Don't** translate "warm" into a cream, sand, or tinted near-white background.
+  Warmth comes from type and the wine accent.
+- **Don't** use emoji or pictographic Unicode glyphs anywhere in UI or chrome.
+- **Don't** add notification soup, likes/reactions, or algorithmic recency theater;
+  Postwork is a durable record, not a chat stream.
+- **Don't** over-round (cards stay ≤8px) or pair a 1px border with a wide soft drop
+  shadow — depth is tonal, not a ghost-card shadow.
+- **Don't** add tracked all-caps eyebrow kickers above sections or gradient hero
+  metrics; this is a product surface, not a SaaS landing page.
