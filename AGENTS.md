@@ -68,6 +68,15 @@ Seed posts ship **baked** summaries (`summaryModel: "seed/baked"`) so the featur
 is visible without a key. Without a key, the Generate/Regenerate button surfaces a
 friendly "configure a provider" message instead of crashing.
 
+## Design Context
+
+Strategic design context lives in `PRODUCT.md` (register, users, brand
+personality, anti-references, design principles). Visual system is documented in
+`DESIGN.md`. These are maintained by the `impeccable` design skill
+(`.agents/skills/impeccable/`); run `$impeccable` for the command menu, or e.g.
+`$impeccable critique <surface>` / `$impeccable polish <component>`. The concrete
+visual rules below remain the quick reference.
+
 ## Design conventions (style is derived from pcstyle.dev)
 
 Dark terminal/developer aesthetic. Tokens live in `src/index.css` `@theme`:

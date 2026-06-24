@@ -17,3 +17,5 @@ dist
 
 # Local agent/editor state
 .amp
+.pi
+.impeccable
