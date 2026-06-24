@@ -16,6 +16,9 @@
   --color-high: #d9a441;
   --color-normal: #8a8782;
 
+  --font-sans:
+    "Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono:
     ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas,
     monospace;
@@ -30,10 +33,10 @@ body,
 body {
   background-color: var(--color-bg);
   color: var(--color-fg);
-  font-family: var(--font-mono);
-  font-feature-settings: "ss01", "cv01";
+  font-family: var(--font-sans);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.011em;
 }
 
 * {
@@ -44,6 +47,14 @@ body {
 ::selection {
   background: var(--color-accent);
   color: var(--color-fg);
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-mono);
+  letter-spacing: 0;
 }
 
 .prose-post {

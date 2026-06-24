@@ -25,18 +25,22 @@ export const priorityStyles: Record<
   { label: string; className: string; dot: string }
 > = {
   urgent: {
-    label: "urgent",
+    label: "Urgent",
     className: "bg-[var(--color-urgent)]/10 text-[var(--color-urgent)] border-[var(--color-urgent)]/30",
     dot: "bg-[var(--color-urgent)]",
   },
   high: {
-    label: "high",
+    label: "High",
     className: "bg-[var(--color-high)]/10 text-[var(--color-high)] border-[var(--color-high)]/30",
     dot: "bg-[var(--color-high)]",
   },
   normal: {
-    label: "normal",
+    label: "Normal",
     className: "bg-[var(--color-faint)]/20 text-[var(--color-muted)] border-[var(--color-border)]",
     dot: "bg-[var(--color-muted)]",
   },
 };
+
+export function titleCase(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}

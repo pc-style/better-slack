@@ -8,6 +8,7 @@ import { StoreProvider } from "./lib/store";
 import { AgentTasksProvider } from "./lib/agentTasks";
 import { SpacesProvider } from "./lib/spaces";
 import { router } from "./router";
+import "@fontsource-variable/inter/index.css";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(

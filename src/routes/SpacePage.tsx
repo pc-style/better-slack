@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, getRouteApi } from "@tanstack/react-router";
 import { useSpaces, type Org } from "../lib/spaces";
-import { PRIORITIES, priorityStyles, timeAgo } from "../lib/format";
+import { PRIORITIES, priorityStyles, timeAgo, titleCase } from "../lib/format";
 
 type Priority = (typeof PRIORITIES)[number];
 type Visibility = "space" | "org" | "public";
@@ -100,7 +100,7 @@ export function SpacePage() {
   return (
     <div>
       <Link to="/spaces" className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] transition hover:text-fg">
-        ← spaces
+        ← Spaces
       </Link>
 
       <header className="mb-5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
@@ -171,7 +171,7 @@ export function SpacePage() {
                       </span>
                     )}
                     <span className="rounded-md border border-accent/30 bg-accent/5 px-1.5 py-0.5 text-accent-soft">
-                      {post.visibility}
+                      {titleCase(post.visibility)}
                     </span>
                   </div>
                   <h2 className="text-[15px] font-semibold text-fg">{post.title}</h2>
