@@ -15,6 +15,21 @@ export const priority = v.union(
   v.literal("normal"),
 );
 
+/** Lifecycle of an agent investigation task (Group A). */
+export const agentTaskStatus = v.union(
+  v.literal("pending"),
+  v.literal("running"),
+  v.literal("done"),
+  v.literal("failed"),
+);
+
+/** Who can see a post inside a (possibly cross-org) space (Group B). */
+export const postVisibility = v.union(
+  v.literal("space"), // everyone in the space (all linked orgs)
+  v.literal("org"), // only the author's own org
+  v.literal("public"),
+);
+
 export default defineSchema({
   users: defineTable({
     name: v.string(),
@@ -40,9 +55,19 @@ export default defineSchema({
     summary: v.optional(v.string()),
     summaryModel: v.optional(v.string()),
     summaryUpdatedAt: v.optional(v.number()),
+    // Group B — intercompany shared spaces. When set, the post belongs to a
+    // structured space (which may span multiple orgs) instead of the legacy
+    // free-text `space` label. `visibility` scopes cross-org readers.
+    spaceId: v.optional(v.id("spaces")),
+    visibility: v.optional(postVisibility),
+    // Group C — per-user walls. null/undefined = normal space post; set = a
+    // post written on this user's wall.
+    wallOwnerId: v.optional(v.id("users")),
   })
     .index("by_activity", ["lastActivityAt"])
     .index("by_space", ["space", "lastActivityAt"])
+    .index("by_space_id", ["spaceId", "lastActivityAt"])
+    .index("by_wall", ["wallOwnerId", "lastActivityAt"])
     .searchIndex("search_body", {
       searchField: "body",
       filterFields: ["space", "priority"],
@@ -67,4 +92,53 @@ export default defineSchema({
     postId: v.id("posts"),
     lastReadAt: v.number(),
   }).index("by_user_post", ["userId", "postId"]),
+
+  // ---- Group A: agent control plane ---------------------------------------
+  // A teammate dispatches an AI coding agent to investigate a post/subthread;
+  // the agent reports back (status + result, and a nested reply on completion).
+  agentTasks: defineTable({
+    postId: v.id("posts"),
+    sourceReplyId: v.optional(v.id("replies")), // subthread the agent explores
+    agentId: v.id("users"), // the agent teammate (isAgent user)
+    requestedById: v.optional(v.id("users")),
+    status: agentTaskStatus,
+    prompt: v.string(),
+    result: v.optional(v.string()),
+    model: v.optional(v.string()),
+    createdAt: v.number(),
+    completedAt: v.optional(v.number()),
+  })
+    .index("by_post", ["postId"])
+    .index("by_agent", ["agentId"])
+    .index("by_status", ["status"]),
+
+  // ---- Group B: intercompany shared spaces --------------------------------
+  orgs: defineTable({
+    name: v.string(),
+    handle: v.string(), // @handle used to invite an external org
+    initials: v.string(),
+    color: v.string(),
+  }).index("by_handle", ["handle"]),
+
+  spaces: defineTable({
+    name: v.string(),
+    slug: v.string(),
+    description: v.optional(v.string()),
+    ownerOrgId: v.id("orgs"),
+    createdAt: v.number(),
+  }).index("by_slug", ["slug"]),
+
+  spaceMemberships: defineTable({
+    spaceId: v.id("spaces"),
+    orgId: v.id("orgs"),
+    role: v.union(v.literal("owner"), v.literal("member")),
+    status: v.union(
+      v.literal("active"),
+      v.literal("invited"),
+      v.literal("declined"),
+    ),
+    createdAt: v.number(),
+  })
+    .index("by_space", ["spaceId"])
+    .index("by_org", ["orgId"]),
 });

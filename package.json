@@ -21,7 +21,8 @@
     "ai": "beta",
     "convex": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "shiki": "^4.2.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "latest",

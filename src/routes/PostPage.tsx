@@ -8,6 +8,8 @@ import { ReplyTree } from "../components/ReplyTree";
 import { Composer } from "../components/Composer";
 import { timeAgo, priorityStyles } from "../lib/format";
 import { AgentTag } from "../components/AgentTag";
+import { RichText } from "../components/RichText";
+import { AgentTasksPanel } from "../components/AgentTasksPanel";
 
 const routeApi = getRouteApi("/posts/$postId");
 
@@ -85,7 +87,9 @@ export function PostPage() {
           <span>· {timeAgo(post.createdAt)}</span>
         </div>
 
-        <p className="prose-post mt-4 text-[15px] text-fg">{post.body}</p>
+        <div className="mt-4">
+          <RichText text={post.body} className="prose-post text-[15px] text-fg" />
+        </div>
 
         <div className="mt-5">
           <AgentSummary
@@ -94,6 +98,10 @@ export function PostPage() {
             model={post.summaryModel}
             updatedAt={post.summaryUpdatedAt}
           />
+        </div>
+
+        <div className="mt-4">
+          <AgentTasksPanel postId={post._id} />
         </div>
       </article>
 

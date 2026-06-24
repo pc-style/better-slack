@@ -87,8 +87,12 @@ type StoreValue = {
     body: string;
     space: string;
     priority: Priority;
+    wallOwnerId?: Id<"users">;
   }) => Promise<Id<"posts">>;
   summarize: (postId: Id<"posts">) => Promise<void>;
+  // Group C — a user's wall: posts they authored + posts left on their wall,
+  // in activity order. Wall posts are excluded from the global feed.
+  useWall: (userId: Id<"users">) => EnrichedPost[] | undefined;
   isLocalId: (id: string) => boolean;
 };
 
@@ -219,14 +223,35 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const sessionMatched = posts
       .filter(
         (p) =>
+          !p.wallOwnerId &&
           (!args.space || p.space === args.space) &&
           (!args.priority || p.priority === args.priority),
       )
       .map(enrichSessionPost);
 
-    const merged = [...sessionMatched, ...backend.map(applyOverlay)];
+    // Wall posts live on user walls, not in the global feed.
+    const merged = [
+      ...sessionMatched,
+      ...backend.filter((p) => !p.wallOwnerId).map(applyOverlay),
+    ];
     merged.sort(sortPosts);
     return args.onlyUnread ? merged.filter((p) => p.unread) : merged;
+  };
+
+  // Group C — wall feed: a user's own posts plus posts left on their wall.
+  const useWall = (userId: Id<"users">) => {
+    const backend = useQuery(api.posts.feed, { viewerId: currentUserId });
+    if (backend === undefined) return undefined;
+    const onWall = (p: { wallOwnerId?: Id<"users">; authorId: Id<"users"> }) =>
+      p.wallOwnerId === userId ||
+      (!p.wallOwnerId && p.authorId === userId);
+    const sessionMatched = posts.filter(onWall).map(enrichSessionPost);
+    const merged = [
+      ...sessionMatched,
+      ...backend.filter(onWall).map(applyOverlay),
+    ];
+    merged.sort(sortPosts);
+    return merged;
   };
 
   const useSearch = (term: string) => {
@@ -363,6 +388,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       body: string;
       space: string;
       priority: Priority;
+      wallOwnerId?: Id<"users">;
     }) => {
       postCounter.current += 1;
       const id = `${LOCAL_PREFIX}p${postCounter.current}` as unknown as Id<"posts">;
@@ -380,6 +406,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         lastActivityAt: now,
         replyCount: 0,
         participantIds: [args.authorId],
+        wallOwnerId: args.wallOwnerId,
       };
       setPosts((prev) => [sp, ...prev]);
       // Author has read their own new post.
@@ -418,6 +445,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     createReply,
     createPost,
     summarize,
+    useWall,
     isLocalId,
   };
 

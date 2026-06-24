@@ -20,7 +20,7 @@ import { createGateway } from "@ai-sdk/gateway";
  * Pioneer (OpenAI-compatible, https://docs.pioneer.ai):
  *   PIONEER_API_KEY, PIONEER_MODEL, PIONEER_BASE_URL?
  */
-function resolveModel(): { model: LanguageModel; modelId: string } {
+export function resolveModel(): { model: LanguageModel; modelId: string } {
   const provider = (process.env.AI_PROVIDER ?? "openai").toLowerCase();
 
   if (provider === "gateway") {

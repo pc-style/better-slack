@@ -4,9 +4,23 @@ import type { EnrichedReply } from "../lib/types";
 import { Avatar } from "./Avatar";
 import { Composer } from "./Composer";
 import { AgentTag } from "./AgentTag";
+import { RichText } from "./RichText";
+import { SendAgentButton } from "./SendAgentButton";
 import { timeAgo } from "../lib/format";
 
 type Node = EnrichedReply & { children: Node[] };
+
+/** Flatten a reply and its descendants into a transcript an agent can read. */
+function subthreadText(node: Node): string {
+  const lines: string[] = [];
+  const walk = (n: Node, depth: number) => {
+    const who = n.author?.name ?? "Unknown";
+    lines.push(`${"  ".repeat(depth)}- ${who}: ${n.body}`);
+    n.children.forEach((c) => walk(c, depth + 1));
+  };
+  walk(node, 0);
+  return lines.join("\n");
+}
 
 function buildTree(replies: EnrichedReply[]): Node[] {
   const byId = new Map<string, Node>();
@@ -46,15 +60,22 @@ function ReplyNode({
                 {timeAgo(node.createdAt)}
               </span>
             </div>
-            <p className="prose-post mt-0.5 text-sm text-fg">
-              {node.body}
-            </p>
-            <button
-              onClick={() => setReplying((r) => !r)}
-              className="mt-1 text-xs text-[var(--color-muted)] transition hover:text-accent-soft"
-            >
-              {replying ? "cancel" : "reply"}
-            </button>
+            <div className="mt-0.5">
+              <RichText text={node.body} className="prose-post text-sm text-fg" />
+            </div>
+            <div className="mt-1 flex items-center gap-3">
+              <button
+                onClick={() => setReplying((r) => !r)}
+                className="text-xs text-[var(--color-muted)] transition hover:text-accent-soft"
+              >
+                {replying ? "cancel" : "reply"}
+              </button>
+              <SendAgentButton
+                postId={postId}
+                replyId={node._id}
+                contextText={subthreadText(node)}
+              />
+            </div>
           </div>
         </div>
 

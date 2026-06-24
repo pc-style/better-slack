@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Link } from "@tanstack/react-router";
 import { useSession } from "../lib/session";
 import { Avatar } from "./Avatar";
 import { AgentTag } from "./AgentTag";
@@ -44,27 +45,40 @@ export function UserSwitcher() {
             view as teammate
           </div>
           {users.map((u) => (
-            <button
+            <div
               key={u._id}
-              onClick={() => {
-                setCurrentUserId(u._id);
-                setOpen(false);
-              }}
-              className={`flex w-full items-center gap-2.5 px-3 py-2 text-left transition hover:bg-[var(--color-surface-2)] ${
+              className={`flex w-full items-center gap-2.5 px-3 py-2 transition hover:bg-[var(--color-surface-2)] ${
                 u._id === currentUser._id ? "bg-[var(--color-surface-2)]" : ""
               }`}
             >
-              <Avatar user={u} size={28} />
-              <div className="leading-tight">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-sm">{u.name}</span>
-                  {u.isAgent && <AgentTag />}
+              <button
+                onClick={() => {
+                  setCurrentUserId(u._id);
+                  setOpen(false);
+                }}
+                className="flex min-w-0 flex-1 items-center gap-2.5 text-left"
+              >
+                <Avatar user={u} size={28} />
+                <div className="min-w-0 leading-tight">
+                  <div className="flex items-center gap-1.5">
+                    <span className="truncate text-sm">{u.name}</span>
+                    {u.isAgent && <AgentTag />}
+                  </div>
+                  <div className="truncate text-[11px] text-[var(--color-muted)]">
+                    {u.title}
+                  </div>
                 </div>
-                <div className="text-[11px] text-[var(--color-muted)]">
-                  {u.title}
-                </div>
-              </div>
-            </button>
+              </button>
+              <Link
+                to="/u/$userId"
+                params={{ userId: u._id }}
+                onClick={() => setOpen(false)}
+                className="shrink-0 rounded-md px-1.5 py-1 text-[11px] text-[var(--color-muted)] transition hover:text-accent-soft"
+                title={`${u.name}'s wall`}
+              >
+                wall →
+              </Link>
+            </div>
           ))}
         </div>
       )}

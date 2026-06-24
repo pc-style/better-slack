@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Id } from "../../convex/_generated/dataModel";
 import { useSession } from "../lib/session";
 import { useStore } from "../lib/store";
+import { useAgentTasks } from "../lib/agentTasks";
+import {
+  parseAgentMentions,
+  resolveAgentUser,
+  AGENT_HANDLES,
+} from "../lib/agentMentions";
+import { insertCodeFence } from "../lib/codeFence";
 import { Avatar } from "./Avatar";
 
 export function Composer({
@@ -19,23 +26,59 @@ export function Composer({
   compact?: boolean;
   onDone?: () => void;
 }) {
-  const { currentUser, currentUserId } = useSession();
+  const { currentUser, currentUserId, users } = useSession();
   const store = useStore();
+  const { dispatch } = useAgentTasks();
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Live preview of which agents this message will summon.
+  const mentioned = parseAgentMentions(body);
+
+  const onCodeFence = () => {
+    const el = textareaRef.current;
+    const start = el?.selectionStart ?? body.length;
+    const end = el?.selectionEnd ?? body.length;
+    const next = insertCodeFence(body, start, end);
+    setBody(next.value);
+    // Restore focus + selection after React re-renders.
+    requestAnimationFrame(() => {
+      const node = textareaRef.current;
+      if (!node) return;
+      node.focus();
+      node.setSelectionRange(next.selectionStart, next.selectionEnd);
+    });
+  };
 
   const submit = async () => {
     if (!body.trim() || !currentUserId) return;
     setBusy(true);
     try {
-      await store.createReply({
+      const text = body.trim();
+      const replyId = await store.createReply({
         postId,
         parentId,
         authorId: currentUserId,
-        body: body.trim(),
+        body: text,
       });
       setBody("");
       onDone?.();
+
+      // @agent invocation: any @cursor/@codex/@claude mention dispatches an
+      // agent task seeded with this message as the prompt + context.
+      for (const handle of parseAgentMentions(text)) {
+        const agent = resolveAgentUser(handle, users);
+        if (!agent) continue;
+        void dispatch({
+          postId,
+          sourceReplyId: replyId,
+          agentId: agent._id,
+          agentName: agent.name,
+          prompt: text,
+          contextText: text,
+        });
+      }
     } finally {
       setBusy(false);
     }
@@ -46,6 +89,7 @@ export function Composer({
       {!compact && <Avatar user={currentUser ?? null} size={32} />}
       <div className="flex-1">
         <textarea
+          ref={textareaRef}
           value={body}
           autoFocus={autoFocus}
           onChange={(e) => setBody(e.target.value)}
@@ -56,10 +100,26 @@ export function Composer({
           rows={compact ? 2 : 3}
           className="w-full resize-y rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm outline-none focus:border-accent/50"
         />
-        <div className="mt-2 flex items-center justify-between">
-          <span className="text-[11px] text-[var(--color-muted)]">
-            ⌘/Ctrl + Enter to send
-          </span>
+        <div className="mt-2 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onCodeFence}
+              title="insert code block"
+              className="rounded-md border border-[var(--color-border)] px-2 py-1 text-[11px] text-[var(--color-muted)] transition hover:text-fg"
+            >
+              {"</> code"}
+            </button>
+            {mentioned.length > 0 ? (
+              <span className="text-[11px] text-accent-soft">
+                summons {mentioned.map((h) => AGENT_HANDLES[h]).join(", ")}
+              </span>
+            ) : (
+              <span className="hidden text-[11px] text-[var(--color-muted)] sm:inline">
+                ⌘/Ctrl + Enter · @cursor to summon an agent
+              </span>
+            )}
+          </div>
           <div className="flex gap-2">
             {onDone && (
               <button

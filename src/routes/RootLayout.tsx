@@ -25,6 +25,27 @@ export function RootLayout() {
             </div>
           </Link>
 
+          <nav className="hidden items-center gap-1 text-xs md:flex">
+            <Link
+              to="/agents"
+              className="rounded-md px-2 py-1 text-[var(--color-muted)] transition hover:bg-[var(--color-surface-2)] hover:text-fg [&.active]:text-accent-soft"
+            >
+              agents
+            </Link>
+            <Link
+              to="/spaces"
+              className="rounded-md px-2 py-1 text-[var(--color-muted)] transition hover:bg-[var(--color-surface-2)] hover:text-fg [&.active]:text-accent-soft"
+            >
+              spaces
+            </Link>
+            <Link
+              to="/orgs"
+              className="rounded-md px-2 py-1 text-[var(--color-muted)] transition hover:bg-[var(--color-surface-2)] hover:text-fg [&.active]:text-accent-soft"
+            >
+              orgs
+            </Link>
+          </nav>
+
           <div className="flex items-center gap-2.5">
             {counts && counts.unread > 0 && (
               <div className="hidden items-center gap-1.5 rounded-lg border border-[var(--color-border)] px-2.5 py-1.5 text-xs sm:flex">

@@ -1,0 +1,147 @@
+import { Link } from "@tanstack/react-router";
+import type { Doc } from "../../convex/_generated/dataModel";
+import { AgentTag } from "../components/AgentTag";
+import { Avatar } from "../components/Avatar";
+import { useAgentTasks, type AgentTask } from "../lib/agentTasks";
+import { useSession } from "../lib/session";
+import { useStore } from "../lib/store";
+import { timeAgo } from "../lib/format";
+
+const statusClasses: Record<AgentTask["status"], string> = {
+  pending: "border-[var(--color-border)] text-[var(--color-muted)] bg-[var(--color-faint)]/20",
+  running: "border-[var(--color-high)]/30 text-[var(--color-high)] bg-[var(--color-high)]/10 animate-pulse",
+  done: "border-accent/30 text-accent-soft bg-accent/10",
+  failed: "border-[var(--color-urgent)]/30 text-[var(--color-urgent)] bg-[var(--color-urgent)]/10",
+};
+
+function StatusChip({ status }: { status: AgentTask["status"] }) {
+  return (
+    <span className={`rounded-md border px-1.5 py-0.5 text-[11px] ${statusClasses[status]}`}>
+      {status}
+    </span>
+  );
+}
+
+function truncate(text: string, max: number) {
+  return text.length > max ? `${text.slice(0, max - 1)}…` : text;
+}
+
+function AgentCard({
+  agent,
+  agentTasks,
+  isLocalId,
+}: {
+  agent: Doc<"users">;
+  agentTasks: AgentTask[];
+  isLocalId: (id: string) => boolean;
+}) {
+  const recent = agentTasks.slice(0, 5);
+
+  return (
+    <article className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <Avatar user={agent} size={38} />
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h2 className="font-semibold text-fg">{agent.name}</h2>
+              <AgentTag />
+            </div>
+            <p className="text-sm text-[var(--color-muted)]">{agent.title}</p>
+          </div>
+        </div>
+        <div className="rounded-md border border-accent/25 bg-accent/10 px-2 py-1 text-xs text-accent-soft">
+          {agentTasks.length} {agentTasks.length === 1 ? "task" : "tasks"}
+        </div>
+      </div>
+
+      {recent.length === 0 ? (
+        <p className="mt-4 text-sm text-[var(--color-muted)]">
+          no investigations assigned yet.
+        </p>
+      ) : (
+        <div className="mt-4 space-y-2">
+          {recent.map((task) => (
+            <div key={task._id} className="rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] p-3">
+              <div className="mb-1.5 flex flex-wrap items-center gap-2">
+                <StatusChip status={task.status} />
+                <span className="text-[11px] text-[var(--color-muted)]">
+                  {timeAgo(task.createdAt)}
+                </span>
+                {isLocalId(task.postId) ? (
+                  <span className="text-[11px] text-[var(--color-muted)]">session post</span>
+                ) : (
+                  <Link
+                    to="/posts/$postId"
+                    params={{ postId: task.postId }}
+                    className="text-[11px] text-accent-soft transition hover:text-fg"
+                  >
+                    open post
+                  </Link>
+                )}
+              </div>
+              <p className="text-sm text-fg">{truncate(task.prompt, 120)}</p>
+              {task.status === "done" && task.result && (
+                <p className="mt-1.5 text-xs text-[var(--color-muted)]">
+                  {truncate(task.result.replace(/\s+/g, " ").trim(), 160)}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </article>
+  );
+}
+
+export function AgentsPage() {
+  const { users } = useSession();
+  const { tasks } = useAgentTasks();
+  const store = useStore();
+  const agents = users.filter((user) => user.isAgent);
+
+  return (
+    <div>
+      <Link
+        to="/"
+        className="mb-4 inline-flex items-center gap-1 text-sm text-[var(--color-muted)] transition hover:text-fg"
+      >
+        ← feed
+      </Link>
+
+      <header className="mb-6">
+        <h1 className="text-2xl font-semibold text-fg">agents</h1>
+        <p className="mt-1 text-sm text-[var(--color-muted)]">
+          dispatch coding teammates to investigate posts and report back into the thread.
+        </p>
+      </header>
+
+      {tasks.length === 0 && (
+        <div className="mb-5 rounded-lg border border-accent/25 bg-accent/[0.06] p-4">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="rounded-sm bg-accent/20 px-1.5 py-0.5 text-[10px] font-semibold text-accent-soft">
+              agents
+            </span>
+            <span className="text-xs font-semibold tracking-wide text-accent-soft lowercase">
+              control plane
+            </span>
+          </div>
+          <p className="text-sm text-[var(--color-muted)]">
+            no agent tasks yet. dispatch agents from any post investigation panel or send one from a subthread.
+          </p>
+        </div>
+      )}
+
+      <div className="grid gap-4">
+        {agents.map((agent) => (
+          <AgentCard
+            key={agent._id}
+            agent={agent}
+            agentTasks={tasks.filter((task) => task.agentId === agent._id)}
+            isLocalId={store.isLocalId}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}

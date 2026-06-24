@@ -8,11 +8,13 @@
  * @module
  */
 
+import type * as agentTasks from "../agentTasks.js";
 import type * as ai from "../ai.js";
 import type * as posts from "../posts.js";
 import type * as reads from "../reads.js";
 import type * as replies from "../replies.js";
 import type * as seed from "../seed.js";
+import type * as spaces from "../spaces.js";
 import type * as users from "../users.js";
 
 import type {
@@ -22,11 +24,13 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  agentTasks: typeof agentTasks;
   ai: typeof ai;
   posts: typeof posts;
   reads: typeof reads;
   replies: typeof replies;
   seed: typeof seed;
+  spaces: typeof spaces;
   users: typeof users;
 }>;
 
