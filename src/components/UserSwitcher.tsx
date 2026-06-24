@@ -21,22 +21,17 @@ export function UserSwitcher() {
   if (!currentUser) return null;
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative shrink-0" ref={ref}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] py-1.5 pr-3 pl-1.5 transition hover:bg-[var(--color-surface-2)]"
+        className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] py-1.5 pr-2.5 pl-1.5 transition hover:bg-[var(--color-surface-2)]"
       >
         <Avatar user={currentUser} size={28} />
-        <div className="text-left leading-tight">
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm font-medium">{currentUser.name}</span>
-            {currentUser.isAgent && <AgentTag />}
-          </div>
-          <div className="text-[11px] text-[var(--color-muted)]">
-            {currentUser.title}
-          </div>
-        </div>
-        <span className="ml-1 text-[var(--color-muted)]">▾</span>
+        <span className="hidden max-w-[8rem] truncate text-sm font-medium whitespace-nowrap sm:inline">
+          {currentUser.name}
+        </span>
+        {currentUser.isAgent && <AgentTag className="hidden sm:inline-flex" />}
+        <span className="text-[var(--color-muted)]">▾</span>
       </button>
 
       {open && (
