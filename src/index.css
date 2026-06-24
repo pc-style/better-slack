@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palette adapted from pcstyle.dev: warm near-black, deep wine accent. */
+  --color-bg: #0a0a0b;
+  --color-surface: #121014;
+  --color-surface-2: #18151a;
+  --color-border: #252327;
+  --color-fg: #e8e6e3;
+  --color-muted: #8a8782;
+  --color-faint: #4a4845;
+  --color-accent: #8c1862;
+  --color-accent-soft: #b53a82;
+
+  --color-urgent: #ff6b6b;
+  --color-high: #d9a441;
+  --color-normal: #8a8782;
+
+  --font-mono:
+    ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas,
+    monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-mono);
+  font-feature-settings: "ss01", "cv01";
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-fg);
+}
+
+.prose-post {
+  white-space: pre-wrap;
+  line-height: 1.65;
+}

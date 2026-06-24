@@ -1,0 +1,19 @@
+node_modules
+dist
+.env
+.env.local
+.DS_Store
+*.log
+.vite
+
+# Convex local backend + generated runtime data
+.convex/
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Vercel
+.vercel
+
+# Local agent/editor state
+.amp
