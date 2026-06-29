@@ -4,7 +4,7 @@ import { useStore } from "../lib/store";
 import { UserSwitcher } from "../components/UserSwitcher";
 import { NewPostDialog } from "../components/NewPostDialog";
 
-export function RootLayout() {
+export function RootLayout({ children }: { children?: React.ReactNode }) {
   const store = useStore();
   const counts = store.useCounts();
   const [composing, setComposing] = useState(false);
@@ -21,6 +21,12 @@ export function RootLayout() {
           </Link>
 
           <nav className="hidden shrink-0 items-center gap-1 text-xs md:flex">
+            <Link
+              to="/flash-experiments"
+              className="rounded-md px-2 py-1 text-[var(--color-muted)] transition hover:bg-[var(--color-surface-2)] hover:text-fg [&.active]:text-accent-soft"
+            >
+              experiments
+            </Link>
             <Link
               to="/agents"
               className="rounded-md px-2 py-1 text-[var(--color-muted)] transition hover:bg-[var(--color-surface-2)] hover:text-fg [&.active]:text-accent-soft"
@@ -62,7 +68,7 @@ export function RootLayout() {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-6">
-        <Outlet />
+        {children ?? <Outlet />}
       </main>
 
       {composing && <NewPostDialog onClose={() => setComposing(false)} />}

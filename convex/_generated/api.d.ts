@@ -10,6 +10,7 @@
 
 import type * as agentTasks from "../agentTasks.js";
 import type * as ai from "../ai.js";
+import type * as flashExperiments from "../flashExperiments.js";
 import type * as posts from "../posts.js";
 import type * as reads from "../reads.js";
 import type * as replies from "../replies.js";
@@ -26,6 +27,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   agentTasks: typeof agentTasks;
   ai: typeof ai;
+  flashExperiments: typeof flashExperiments;
   posts: typeof posts;
   reads: typeof reads;
   replies: typeof replies;

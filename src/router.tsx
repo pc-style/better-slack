@@ -11,6 +11,8 @@ import { SpacesPage } from "./routes/SpacesPage";
 import { SpacePage } from "./routes/SpacePage";
 import { LinkedOrgsPage } from "./routes/LinkedOrgsPage";
 import { WallPage } from "./routes/WallPage";
+import { FlashExperimentsPage } from "./routes/FlashExperimentsPage";
+import { FlashExperimentPage } from "./routes/FlashExperimentPage";
 
 const rootRoute = createRootRoute({ component: RootLayout });
 
@@ -56,6 +58,18 @@ const wallRoute = createRoute({
   component: WallPage,
 });
 
+const flashExperimentsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/flash-experiments",
+  component: FlashExperimentsPage,
+});
+
+const flashExperimentRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/flash-experiments/$slug",
+  component: FlashExperimentPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   postRoute,
@@ -64,6 +78,8 @@ const routeTree = rootRoute.addChildren([
   spaceRoute,
   orgsRoute,
   wallRoute,
+  flashExperimentsRoute,
+  flashExperimentRoute,
 ]);
 
 export const router = createRouter({ routeTree });

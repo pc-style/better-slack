@@ -4,6 +4,12 @@ Post-based team communication app (a Facebook-Workplace successor). Posts are th
 top-level unit, not channels: nested replies, activity bumping, full-text search,
 per-user unread + priority states, and an AI agent-summary slot on every post.
 
+## Current project mode
+
+This is a highly experimental flow-design prototype. Do not assume the goal is a
+working production app yet; prioritize understanding, shaping, and validating the
+product flow before building real app behavior.
+
 ## Stack
 
 - **Bun** for all tooling (never npm/pnpm/yarn/npx — use `bun` / `bunx`).

@@ -99,6 +99,15 @@ export default defineSchema({
     lastReadAt: v.number(),
   }).index("by_user_post", ["userId", "postId"]),
 
+  flashExperimentVotes: defineTable({
+    slug: v.string(),
+    voterSubject: v.string(),
+    vote: v.union(v.literal("up"), v.literal("down")),
+    updatedAt: v.number(),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_slug_voter", ["slug", "voterSubject"]),
+
   // ---- Group A: agent control plane ---------------------------------------
   // A teammate dispatches an AI coding agent to investigate a post/subthread;
   // the agent reports back (status + result, and a nested reply on completion).
