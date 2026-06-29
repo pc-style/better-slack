@@ -4,6 +4,7 @@ import type { EnrichedReply } from "../lib/types";
 import { Avatar } from "./Avatar";
 import { Composer } from "./Composer";
 import { AgentTag } from "./AgentTag";
+import { UserRoleTag } from "./UserRoleTag";
 import { RichText } from "./RichText";
 import { SendAgentButton } from "./SendAgentButton";
 import { timeAgo } from "../lib/format";
@@ -56,6 +57,7 @@ function ReplyNode({
                 {node.author?.name ?? "Unknown"}
               </span>
               {node.author?.isAgent && <AgentTag />}
+              <UserRoleTag role={node.author?.role} />
               <span className="text-[11px] text-[var(--color-muted)]">
                 {timeAgo(node.createdAt)}
               </span>

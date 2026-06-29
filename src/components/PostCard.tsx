@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { EnrichedPost } from "../lib/types";
 import { Avatar } from "./Avatar";
 import { AgentTag } from "./AgentTag";
+import { UserRoleTag } from "./UserRoleTag";
 import { timeAgo, priorityStyles } from "../lib/format";
 
 export function PostCard({ post }: { post: EnrichedPost }) {
@@ -62,6 +63,7 @@ export function PostCard({ post }: { post: EnrichedPost }) {
               <Avatar user={post.author} size={20} />
               <span>{post.author?.name ?? "Unknown"}</span>
               {post.author?.isAgent && <AgentTag />}
+              <UserRoleTag role={post.author?.role} />
               <span>·</span>
               <span>{timeAgo(post.createdAt)}</span>
             </div>

@@ -4,6 +4,7 @@ import type { Id } from "../../convex/_generated/dataModel";
 import { AgentTag } from "../components/AgentTag";
 import { Avatar } from "../components/Avatar";
 import { PostCard } from "../components/PostCard";
+import { UserRoleTag } from "../components/UserRoleTag";
 import { WallPostDialog } from "../components/WallPostDialog";
 import { useSession } from "../lib/session";
 import { useStore } from "../lib/store";
@@ -49,6 +50,7 @@ export function WallPage() {
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-semibold text-fg">{owner.name}</h1>
                 {owner.isAgent && <AgentTag />}
+                <UserRoleTag role={owner.role} />
               </div>
               <p className="mt-1 text-sm text-[var(--color-muted)]">{owner.title}</p>
             </div>

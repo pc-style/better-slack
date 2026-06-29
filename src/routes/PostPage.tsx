@@ -10,6 +10,7 @@ import { timeAgo, priorityStyles } from "../lib/format";
 import { AgentTag } from "../components/AgentTag";
 import { RichText } from "../components/RichText";
 import { AgentTasksPanel } from "../components/AgentTasksPanel";
+import { UserRoleTag } from "../components/UserRoleTag";
 import { useActiveExperiment } from "../flashExperiments/active";
 
 const routeApi = getRouteApi("/app/posts/$postId");
@@ -88,6 +89,7 @@ export function PostPage() {
           <Avatar user={post.author} size={28} />
           <span className="text-fg">{post.author?.name}</span>
           {post.author?.isAgent && <AgentTag />}
+          <UserRoleTag role={post.author?.role} />
           <span>· {post.author?.title}</span>
           <span>· {timeAgo(post.createdAt)}</span>
         </div>

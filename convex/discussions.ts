@@ -72,9 +72,10 @@ async function getOrCreateViewer(ctx: MutationCtx): Promise<Id<"users">> {
 
   return await ctx.db.insert("users", {
     name,
-    title: "community",
+    title: "member",
     avatarColor: colorFor(identity.subject),
     initials: initialsFrom(name),
+    role: "member",
     subject: identity.subject,
   });
 }

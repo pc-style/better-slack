@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useSession } from "../lib/session";
 import { Avatar } from "./Avatar";
 import { AgentTag } from "./AgentTag";
+import { UserRoleTag } from "./UserRoleTag";
 
 export function UserSwitcher() {
   const { users, currentUser, setCurrentUserId } = useSession();
@@ -31,6 +32,7 @@ export function UserSwitcher() {
           {currentUser.name}
         </span>
         {currentUser.isAgent && <AgentTag className="hidden sm:inline-flex" />}
+        <UserRoleTag role={currentUser.role} className="hidden sm:inline-flex" />
         <span className="text-[var(--color-muted)]">▾</span>
       </button>
 
@@ -58,6 +60,7 @@ export function UserSwitcher() {
                   <div className="flex items-center gap-1.5">
                     <span className="truncate text-sm">{u.name}</span>
                     {u.isAgent && <AgentTag />}
+                    <UserRoleTag role={u.role} />
                   </div>
                   <div className="truncate text-[11px] text-[var(--color-muted)]">
                     {u.title}

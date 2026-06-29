@@ -6,6 +6,7 @@ import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import { Avatar } from "../components/Avatar";
 import { Markdown } from "../components/Markdown";
+import { UserRoleTag } from "../components/UserRoleTag";
 import { timeAgo } from "../lib/format";
 import { signIn } from "../shoo";
 
@@ -192,6 +193,7 @@ function ReplyItem({
           <span className="text-xs text-fg">
             {node.author?.name ?? "member"}
           </span>
+          <UserRoleTag role={node.author?.role} />
           <span className="text-[10px] text-[var(--color-muted)]">
             {timeAgo(node.createdAt)}
           </span>
