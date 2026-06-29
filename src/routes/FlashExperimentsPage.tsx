@@ -1,7 +1,20 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { flashExperiments } from "../flashExperiments/registry";
+import {
+  flashExperiments,
+  type ExperimentStatus,
+} from "../flashExperiments/registry";
+
+const statusStyles: Record<ExperimentStatus, string> = {
+  new: "border-accent/30 bg-accent/10 text-accent-soft",
+  reviewing:
+    "border-[var(--color-high)]/30 bg-[var(--color-high)]/10 text-[var(--color-high)]",
+  liked:
+    "border-accent/40 bg-accent/15 text-accent-soft",
+  rejected:
+    "border-[var(--color-border)] bg-[var(--color-faint)]/20 text-[var(--color-muted)]",
+};
 
 export function FlashExperimentsPage() {
   const votes = useQuery(api.flashExperiments.listVotes, {
@@ -28,16 +41,23 @@ export function FlashExperimentsPage() {
               key={experiment.slug}
               to="/flash-experiments/$slug"
               params={{ slug: experiment.slug }}
+              search={{}}
               className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition hover:border-accent/40 hover:bg-[var(--color-surface-2)]"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] text-[var(--color-muted)]">
-                    <span className="rounded-md border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-accent-soft">
+                  <div className="mb-2 flex flex-wrap items-center gap-1.5 text-[11px] text-[var(--color-muted)]">
+                    <span
+                      className={`rounded-md border px-1.5 py-0.5 font-medium ${statusStyles[experiment.status]}`}
+                    >
                       {experiment.status}
                     </span>
+                    <span className="px-0.5 text-[var(--color-faint)]">·</span>
                     {experiment.slots.map((slot) => (
-                      <span key={slot} className="rounded-md border border-[var(--color-border)] px-1.5 py-0.5">
+                      <span
+                        key={slot}
+                        className="rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-1.5 py-0.5 font-mono text-[10px] tracking-tight"
+                      >
                         {slot}
                       </span>
                     ))}
