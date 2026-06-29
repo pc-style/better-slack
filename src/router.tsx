@@ -64,10 +64,21 @@ const flashExperimentsRoute = createRoute({
   component: FlashExperimentsPage,
 });
 
+export type FlashExperimentView = "experiment" | "baseline";
+
+type FlashExperimentSearch = {
+  // optional so links to this route don't have to pass `view`; the page
+  // defaults a missing value to "experiment" and only writes "baseline"
+  // into the URL, keeping the default view's URL clean and shareable.
+  view?: FlashExperimentView;
+};
+
 const flashExperimentRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/flash-experiments/$slug",
   component: FlashExperimentPage,
+  validateSearch: (search: Record<string, unknown>): FlashExperimentSearch =>
+    search.view === "baseline" ? { view: "baseline" } : {},
 });
 
 const routeTree = rootRoute.addChildren([
