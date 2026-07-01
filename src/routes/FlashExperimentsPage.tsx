@@ -173,7 +173,7 @@ export function FlashExperimentsPage() {
               </h2>
               <p className="text-right text-[11px] text-[var(--color-muted)]">
                 community suggestions that shipped — now part of the default
-                app. discussion closed.
+                app.
               </p>
             </div>
             <div className="grid gap-1.5">
@@ -356,14 +356,11 @@ function ImplementedRow({ experiment }: { experiment: FlashExperiment }) {
       to="/flash-experiments/$slug"
       params={{ slug: experiment.slug }}
       title={experiment.summary}
-      className="group flex items-center gap-3 rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-surface)]/70 px-3 py-2 transition hover:border-accent/40 hover:bg-[var(--color-surface)]"
+      className="group flex items-center gap-2.5 rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-surface)]/70 px-3 py-2 transition hover:border-accent/40 hover:bg-[var(--color-surface)]"
     >
       <ImplementedBadge />
-      <span className="shrink-0 truncate text-sm font-medium lowercase text-fg">
+      <span className="min-w-0 flex-1 truncate text-sm font-medium lowercase text-fg">
         {experiment.title}
-      </span>
-      <span className="min-w-0 flex-1 truncate text-xs text-[var(--color-muted)]">
-        {experiment.summary}
       </span>
       {suggestion && (
         <span className="hidden shrink-0 text-[11px] text-[var(--color-muted)] sm:inline">
