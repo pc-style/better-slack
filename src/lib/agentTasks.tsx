@@ -82,6 +82,17 @@ export function AgentTasksProvider({ children }: { children: ReactNode }) {
           prompt: args.prompt,
           contextText: args.contextText,
         });
+        if (res.disabled) {
+          // No AI provider configured for the demo — surface a calm notice
+          // instead of posting the fallback string as an agent reply.
+          patchTask(id, {
+            status: "failed",
+            completedAt: Date.now(),
+            error: res.result,
+            model: res.model,
+          });
+          return;
+        }
         patchTask(id, {
           status: "done",
           result: res.result,
@@ -100,7 +111,7 @@ export function AgentTasksProvider({ children }: { children: ReactNode }) {
           status: "failed",
           completedAt: Date.now(),
           error: /API_KEY|not set/i.test(msg)
-            ? "No AI provider configured — set an API key in the Convex env to run agents live."
+            ? "AI is disabled for the time of the demo."
             : msg,
         });
       }

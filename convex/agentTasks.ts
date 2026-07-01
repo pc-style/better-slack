@@ -1,11 +1,27 @@
 import { generateText } from "ai";
 import { v } from "convex/values";
 import { action } from "./_generated/server";
-import { resolveModel } from "./ai";
+import { aiConfigured, resolveModel } from "./ai";
 
 export const runAgent = action({
   args: { agentName: v.string(), prompt: v.string(), contextText: v.string() },
-  handler: async (_ctx, args): Promise<{ result: string; model: string }> => {
+  handler: async (_ctx, args): Promise<{
+    result: string;
+    model: string;
+    disabled?: boolean;
+  }> => {
+    // Demo fallback: when no AI provider is configured on the deployment, the
+    // action returns a disabled signal instead of throwing — so the client
+    // shows a calm "AI is disabled for the demo" state and the Convex backend
+    // never logs a Server Error.
+    if (!aiConfigured()) {
+      return {
+        result: "AI is disabled for the time of the demo.",
+        model: "disabled",
+        disabled: true,
+      };
+    }
+
     // agentName is interpolated into the system prompt — collapse whitespace
     // and cap length so it can't carry injected multi-line instructions.
     const agentName =

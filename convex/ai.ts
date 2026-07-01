@@ -68,6 +68,19 @@ export function resolveModel(): { model: LanguageModel; modelId: string } {
   return { model: createOpenAI({ apiKey })(modelId), modelId };
 }
 
+/**
+ * Whether an AI provider is configured on this deployment, without throwing.
+ * Lets actions short-circuit into a friendly "disabled for the demo" result
+ * instead of surfacing a Server Error to the client.
+ */
+export function aiConfigured(): boolean {
+  const provider = (process.env.AI_PROVIDER ?? "openai").toLowerCase();
+  if (provider === "gateway") return !!process.env.AI_GATEWAY_API_KEY;
+  if (provider === "pioneer")
+    return !!process.env.PIONEER_API_KEY && !!process.env.PIONEER_MODEL;
+  return !!process.env.OPENAI_API_KEY;
+}
+
 export const getContext = internalQuery({
   args: { postId: v.id("posts") },
   handler: async (ctx, args) => {
