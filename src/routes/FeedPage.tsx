@@ -1,22 +1,38 @@
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useStore } from "../lib/store";
 import { PostCard } from "../components/PostCard";
+import { QuickPostBar } from "../components/QuickPostBar";
 import { SPACES, PRIORITIES, priorityStyles } from "../lib/format";
 import { useActiveExperiment } from "../flashExperiments/active";
+import type { FeedSearch } from "../router";
 
 export function FeedPage() {
   const store = useStore();
   const { slots } = useActiveExperiment();
-  const [term, setTerm] = useState("");
-  const [space, setSpace] = useState<string | null>(null);
-  const [priority, setPriority] = useState<string | null>(null);
-  const [onlyUnread, setOnlyUnread] = useState(false);
+  const navigate = useNavigate();
+  const search = useSearch({ strict: false }) as FeedSearch;
+  const term = search.q ?? "";
+  const space = SPACES.includes(search.space as never) ? search.space : undefined;
+  const priority = PRIORITIES.includes(search.priority as never)
+    ? search.priority
+    : undefined;
+  const onlyUnread = search.unread ?? false;
+
+  const setSearch = (next: FeedSearch) => {
+    void navigate({
+      to: "/",
+      search: (prev) => ({
+        ...(prev as FeedSearch),
+        ...next,
+      }),
+      replace: true,
+    });
+  };
 
   const searching = term.trim().length > 0;
 
   const feed = store.useFeed({
-    space: space ?? undefined,
+    space,
     priority: (priority as never) ?? undefined,
     onlyUnread,
   });
@@ -27,6 +43,7 @@ export function FeedPage() {
   return (
     <div>
       {slots.feedHeader}
+      <QuickPostBar />
 
       <div className="mb-4">
         <div className="relative">
@@ -35,13 +52,13 @@ export function FeedPage() {
           </span>
           <input
             value={term}
-            onChange={(e) => setTerm(e.target.value)}
+            onChange={(e) => setSearch({ q: e.target.value || undefined })}
             placeholder="search posts: decisions, incidents, anything…"
             className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] py-2.5 pr-3 pl-8 text-sm outline-none focus:border-accent/50"
           />
           {searching && (
             <button
-              onClick={() => setTerm("")}
+              onClick={() => setSearch({ q: undefined })}
               className="absolute top-1/2 right-3 -translate-y-1/2 text-xs text-[var(--color-muted)] hover:text-fg"
             >
               clear
@@ -52,11 +69,11 @@ export function FeedPage() {
 
       {!searching && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <FilterChip active={!space} onClick={() => setSpace(null)}>
+          <FilterChip active={!space} onClick={() => setSearch({ space: undefined })}>
             all spaces
           </FilterChip>
           {SPACES.map((s) => (
-            <FilterChip key={s} active={space === s} onClick={() => setSpace(s)}>
+            <FilterChip key={s} active={space === s} onClick={() => setSearch({ space: s })}>
               {s}
             </FilterChip>
           ))}
@@ -65,14 +82,14 @@ export function FeedPage() {
             <FilterChip
               key={pr}
               active={priority === pr}
-              onClick={() => setPriority(priority === pr ? null : pr)}
+              onClick={() => setSearch({ priority: priority === pr ? undefined : pr })}
               className={priority === pr ? priorityStyles[pr].className : ""}
             >
               {pr}
             </FilterChip>
           ))}
           <span className="mx-1 h-4 w-px bg-[var(--color-border)]" />
-          <FilterChip active={onlyUnread} onClick={() => setOnlyUnread((u) => !u)}>
+          <FilterChip active={onlyUnread} onClick={() => setSearch({ unread: onlyUnread ? undefined : true })}>
             unread only
           </FilterChip>
 

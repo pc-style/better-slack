@@ -140,7 +140,7 @@ export const inlineBottomComposer: FlashExperiment = {
   summary:
     "Dock the new-post input to the bottom of the screen so you write a post inline, instead of opening a separate dialog from the new post button.",
   requestedBy: "@HiteshRohira15",
-  status: "new",
+  status: "shipped",
   category: "community",
   suggestion: {
     name: "Hitesh",
@@ -149,6 +149,7 @@ export const inlineBottomComposer: FlashExperiment = {
   },
   slots: ["feedHeader"],
   notes: [
+    "graduated — now the default experience",
     "renders a fixed quick-post bar docked at the bottom of the viewport",
     "expands inline on focus (title + body + space/priority) — no modal",
     "creates a real post and navigates to it; ⌘/Ctrl + Enter posts",

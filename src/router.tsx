@@ -15,6 +15,13 @@ import { WallPage } from "./routes/WallPage";
 import { FlashExperimentsPage } from "./routes/FlashExperimentsPage";
 import { FlashExperimentPage } from "./routes/FlashExperimentPage";
 
+export type FeedSearch = {
+  q?: string;
+  space?: string;
+  priority?: string;
+  unread?: boolean;
+};
+
 // Pass-through root: global providers live in main.tsx, so the root just
 // renders whatever route matched. This lets the experiment preview opt out of
 // the app chrome (see appLayoutRoute below).
@@ -31,6 +38,12 @@ const appLayoutRoute = createRoute({
 const indexRoute = createRoute({
   getParentRoute: () => appLayoutRoute,
   path: "/",
+  validateSearch: (search: Record<string, unknown>): FeedSearch => ({
+    q: typeof search.q === "string" ? search.q : undefined,
+    space: typeof search.space === "string" ? search.space : undefined,
+    priority: typeof search.priority === "string" ? search.priority : undefined,
+    unread: search.unread === true || search.unread === "true" || search.unread === "1",
+  }),
   component: FeedPage,
 });
 

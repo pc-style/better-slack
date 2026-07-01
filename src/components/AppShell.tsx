@@ -1,0 +1,86 @@
+import { type ReactNode } from "react";
+import { Link } from "@tanstack/react-router";
+import { useStore } from "../lib/store";
+import { UserSwitcher } from "./UserSwitcher";
+
+const NAV_ITEMS = [
+  { label: "home", to: "/" },
+  { label: "priority", to: "/" },
+  { label: "spaces", to: "/spaces" },
+  { label: "agents", to: "/agents" },
+  { label: "orgs", to: "/orgs" },
+  { label: "experiments", to: "/flash-experiments" },
+] as const;
+
+export function AppShell({ children }: { children: ReactNode }) {
+  const store = useStore();
+  const counts = store.useCounts();
+
+  return (
+    <div className="min-h-full">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-6 md:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-[220px_minmax(0,640px)_240px] lg:justify-center">
+        <aside className="flex flex-col gap-4 md:sticky md:top-6 md:h-[calc(100vh-3rem)]">
+          <Link to="/" className="px-2 text-base font-semibold text-fg">
+            postwork
+          </Link>
+
+          <nav className="space-y-1 text-sm text-[var(--color-muted)]">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.label}
+                to={item.to}
+                className="block rounded-md px-3 py-2 transition hover:bg-[var(--color-surface)] hover:text-fg [&.active]:text-accent-soft"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <Link
+            to="/"
+            className="mt-1 rounded-lg bg-accent px-3 py-2 text-center text-sm font-medium text-fg transition hover:bg-accent-soft"
+          >
+            + new post
+          </Link>
+
+          <div className="mt-auto">
+            <UserSwitcher />
+          </div>
+        </aside>
+
+        <main className="min-w-0 px-4 py-6">{children}</main>
+
+        <aside className="hidden lg:block">
+          <div className="sticky top-6 space-y-3">
+            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-sm">
+              <div className="mb-2 text-[11px] tracking-wide text-[var(--color-muted)] uppercase">
+                your queue
+              </div>
+              {counts ? (
+                <div className="space-y-1 text-[var(--color-muted)]">
+                  <div>
+                    <span className="text-accent-soft">{counts.unread}</span>{" "}
+                    unread
+                  </div>
+                  {counts.urgent > 0 && (
+                    <div>
+                      <span className="text-red-300">{counts.urgent}</span>{" "}
+                      urgent
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-[var(--color-muted)]">loading…</div>
+              )}
+            </div>
+
+            <div className="rounded-lg border border-dashed border-[var(--color-border)] p-4 text-xs text-[var(--color-muted)]">
+              posts stay centered for reading; navigation and queue context stay
+              close at hand.
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  );
+}

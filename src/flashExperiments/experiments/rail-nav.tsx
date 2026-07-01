@@ -105,10 +105,11 @@ export const railNav: FlashExperiment = {
   summary:
     "Promote inbox, priority, spaces and agents to a persistent left rail with live unread counts instead of header tabs.",
   requestedBy: "navigation review",
-  status: "reviewing",
+  status: "rejected",
   category: "testing",
   slots: ["sidebar"],
   notes: [
+    "deprecated — the shipped centered reading column already promotes inbox/priority/spaces/agents to a persistent left rail",
     "switches the real shell into its two-column path",
     "rail items with routes (inbox/spaces/agents/orgs) link to the real app",
     "items without a route are dimmed to signal they're preview-only",

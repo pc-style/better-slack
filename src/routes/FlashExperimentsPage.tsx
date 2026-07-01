@@ -20,6 +20,7 @@ const statusStyles: Record<ExperimentStatus, string> = {
   reviewing: "border-[var(--color-high)]/40 text-[var(--color-high)]",
   liked: "border-accent/50 text-accent-soft",
   rejected: "border-[var(--color-border)] text-[var(--color-muted)]",
+  shipped: "border-accent/50 text-accent-soft",
 };
 
 const categoryMeta: Record<

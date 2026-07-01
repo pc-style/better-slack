@@ -47,10 +47,11 @@ export const priorityFirstFeed: FlashExperiment = {
   summary:
     "Make priority and unread state feel like the primary navigation model, not secondary filters.",
   requestedBy: "flow review",
-  status: "new",
+  status: "rejected",
   category: "testing",
   slots: ["feedHeader"],
   notes: [
+    "deprecated — the entry cards do not actually filter (they link to / and no-op) and the real feed already has priority filter chips; not worth shipping as-is",
     "keeps the real app shell and feed",
     "adds a priority-first header above the chronological feed",
     "entry-point cards link back into the real feed; per-filter routing is a follow-up",

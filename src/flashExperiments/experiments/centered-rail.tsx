@@ -108,7 +108,7 @@ export const centeredRail: FlashExperiment = {
   summary:
     "Move navigation to the sides and keep the main content in a narrow centered column, like twitter, so the feed reads more easily.",
   requestedBy: "@Galicius315715",
-  status: "new",
+  status: "shipped",
   category: "community",
   suggestion: {
     name: "Galicius",
@@ -117,6 +117,7 @@ export const centeredRail: FlashExperiment = {
   },
   slots: ["app-shell"],
   notes: [
+    "graduated — now the default experience",
     "replaces the whole app shell with a three-column layout",
     "left nav rail (home/priority/spaces/agents/orgs) + new post + user switcher",
     "narrow centered reading column wraps the real feed and post pages",

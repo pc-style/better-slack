@@ -18,7 +18,12 @@ export type ExperimentSlot =
   | "post"
   | "replies"
   | "composer";
-export type ExperimentStatus = "new" | "reviewing" | "liked" | "rejected";
+export type ExperimentStatus =
+  | "new"
+  | "reviewing"
+  | "liked"
+  | "rejected"
+  | "shipped";
 
 /**
  * Which work-in-progress track an experiment lives in.
@@ -60,11 +65,11 @@ export const flashExperiments: FlashExperiment[] = [
   centeredRail,
   inlineBottomComposer,
   // testing — our own in-house probes
+  compactCards,
+  focusedComposer,
   priorityFirstFeed,
   wideReviewShell,
   railNav,
-  compactCards,
-  focusedComposer,
 ];
 
 /** Order categories render in on the lab page. */

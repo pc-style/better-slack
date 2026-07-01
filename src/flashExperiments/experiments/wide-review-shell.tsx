@@ -83,10 +83,11 @@ export const wideReviewShell: FlashExperiment = {
   summary:
     "Give experiment review more horizontal room so the app feels like a flow board instead of a narrow feed.",
   requestedBy: "layout discussion",
-  status: "new",
+  status: "rejected",
   category: "testing",
   slots: ["app-shell"],
   notes: [
+    "deprecated — superseded by the shipped centered reading column (community); a second full-shell rail layout is redundant",
     "replaces the whole app shell",
     "wraps the real routed pages (feed, post detail) in the wide layout",
     "carries new-post, unread counts, and user switcher into the side rail",
